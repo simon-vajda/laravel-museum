@@ -13,15 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('item_label', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
             $table->timestamps();
-            $table->boolean('is_admin')->default(false);
+            $table->unsignedBigInteger('item_id');
+            $table->unsignedBigInteger('label_id');
+
+            $table->unique(['item_id', 'label_id']);
+            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
+            $table->foreign('label_id')->references('id')->on('labels')->onDelete('cascade');
         });
     }
 
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('item_label');
     }
 };
