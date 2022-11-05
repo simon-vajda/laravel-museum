@@ -11,7 +11,7 @@ class Item extends Model
 
     public function comments()
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Comment::class)->orderBy('updated_at', 'desc');
     }
 
     public function labels()

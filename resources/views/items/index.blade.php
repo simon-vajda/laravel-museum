@@ -20,7 +20,7 @@
                             </div>
                             <p class="card-text">{{ Str::limit($item->description, 120, $end = '...') }}</p>
                             <div class="d-grid">
-                                <a href="#" class="btn btn-primary">Show more</a>
+                                <a href="{{ route('items.show', $item) }}" class="btn btn-primary">Show more</a>
                             </div>
                         </div>
                     </div>
