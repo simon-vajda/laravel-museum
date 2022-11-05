@@ -18,4 +18,9 @@ class Item extends Model
     {
         return $this->belongsToMany(Label::class)->withTimestamps();
     }
+
+    public function visibleLabels()
+    {
+        return $this->labels()->where('display', true);
+    }
 }
