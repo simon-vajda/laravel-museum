@@ -37,21 +37,26 @@
         </div>
 
         <div class="row mt-4">
-            <form action="" method="post" novalidate>
+            <form action="{{ route('comments.store') }}" method="post" novalidate>
+                @csrf
+
+                <input type="hidden" name="item" value="{{ $item->id }}">
                 @guest
                     <div class="mb-1 text-danger">
                         Log in to leave a comment.
                     </div>
                 @endguest
-                <textarea class="form-control" name="new-comment" id="new-comment" rows="2" placeholder="New comment..."
+                <textarea class="form-control" name="text" id="new-comment" rows="2" placeholder="New comment..."
                     @guest{{ 'disabled' }} @endguest></textarea>
                 <button class="btn btn-primary float-end me-2 mt-2 mb-4" type="submit" @guest{{ 'disabled' }} @endguest>
                     Submit
                 </button>
 
-                <div class="mb-1 text-danger">
-                    A komment nem lehet üres!
-                </div>
+                @error('text')
+                    <div class="mb-1 text-danger">
+                        {{ $message }}
+                    </div>
+                @enderror
 
             </form>
         </div>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
 use Illuminate\Support\Facades\Auth;
@@ -18,5 +19,6 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [ItemController::class, 'index']);
 
 Route::resource('items', ItemController::class);
+Route::resource('comments', CommentController::class);
 
 Auth::routes();
