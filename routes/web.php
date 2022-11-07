@@ -3,6 +3,7 @@
 use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\LabelController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -20,5 +21,6 @@ Route::get('/', [ItemController::class, 'index']);
 
 Route::resource('items', ItemController::class);
 Route::resource('comments', CommentController::class);
+Route::resource('labels', LabelController::class);
 
 Auth::routes();

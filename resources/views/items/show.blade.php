@@ -25,8 +25,8 @@
                     </div>
                     <div class="mt-2 mb-2">
                         @foreach ($item->visibleLabels as $label)
-                            <span class="badge rounded-pill"
-                                style="background-color: {{ $label->color }}">{{ $label->name }}</span>
+                            <a href="{{ route('labels.show', $label) }}" class="badge rounded-pill text-decoration-none"
+                                style="background-color: {{ $label->color }}">{{ $label->name }}</a>
                         @endforeach
                     </div>
                 </div>

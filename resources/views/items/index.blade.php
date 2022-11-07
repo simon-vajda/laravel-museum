@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="container">
+        @yield('header')
         <div class="row gy-4">
             @forelse ($items as $item)
                 <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
@@ -14,8 +15,9 @@
                             <small class="text-muted">Obtained on {{ $item->obtained }}</small>
                             <div class="mt-2 mb-2">
                                 @foreach ($item->visibleLabels as $label)
-                                    <span class="badge rounded-pill"
-                                        style="background-color: {{ $label->color }}">{{ $label->name }}</span>
+                                    <a href="{{ route('labels.show', $label) }}"
+                                        class="badge rounded-pill text-decoration-none"
+                                        style="background-color: {{ $label->color }}">{{ $label->name }}</a>
                                 @endforeach
                             </div>
                             <p class="card-text">{{ Str::limit($item->description, 120, $end = '...') }}</p>
