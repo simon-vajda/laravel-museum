@@ -3,7 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\Label;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ItemController extends Controller
 {
@@ -26,7 +33,13 @@ class ItemController extends Controller
      */
     public function create()
     {
-        //
+        if (Auth::guest() || !Auth::user()->is_admin) {
+            return Redirect::route('items.index');
+        }
+
+        return view('items.create', [
+            'labels' => Label::all()->where('display', true)
+        ]);
     }
 
     /**
@@ -37,7 +50,42 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate(
+            [
+                'name' => ['required', 'min:3'],
+                'description' => ['required'],
+                'obtained' => ['required', 'date'],
+                'image' => ['nullable', 'file', 'image', 'max:4096'],
+                'labels' => ['nullable', 'array'],
+                'labels.*' => ['numeric', 'integer', 'exists:labels,id'],
+            ]
+        );
+
+        // filename
+        $fn = null;
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+
+            $fn = 'ci_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+
+            Storage::disk('public')->put($fn, $file->get());
+        }
+
+        $item = new Item();
+        $item->name = $validated['name'];
+        $item->description = $validated['description'];
+        $item->obtained = $validated['obtained'];
+        $item->image = $fn;
+        $item->save();
+
+        if (isset($validated['labels'])) {
+            $item->labels()->sync($validated['labels']);
+        }
+
+        Session::flash("item_created", $validated['name']);
+
+        return Redirect::route('items.show', $item);
     }
 
     /**

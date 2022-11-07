@@ -2,6 +2,12 @@
 
 @section('content')
     <div class="container">
+        @if (Session::has('item_created'))
+            <div class="alert alert-success" role="alert">
+                Post ({{ Session::get('item_created') }}) successfully created!
+            </div>
+        @endif
+
         <div class="row">
             <div class="container-fluid">
                 <div class="row">
@@ -48,7 +54,8 @@
                 @endguest
                 <textarea class="form-control" name="text" id="new-comment" rows="2" placeholder="New comment..."
                     @guest{{ 'disabled' }} @endguest></textarea>
-                <button class="btn btn-primary float-end me-2 mt-2 mb-4" type="submit" @guest{{ 'disabled' }} @endguest>
+                <button class="btn btn-primary float-end me-2 mt-2 mb-4" type="submit"
+                    @guest{{ 'disabled' }} @endguest>
                     Submit
                 </button>
 
