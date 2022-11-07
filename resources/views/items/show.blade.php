@@ -4,7 +4,7 @@
     <div class="container">
         @if (Session::has('item_created'))
             <div class="alert alert-success" role="alert">
-                Post ({{ Session::get('item_created') }}) successfully created!
+                Item {{ Session::get('item_created') }} successfully created!
             </div>
         @endif
 
@@ -19,13 +19,15 @@
                         @if (Auth::check() && Auth::user()->is_admin)
                             <div>
                                 <button class="btn btn-light mb-1">Edit</button>
-                                <button class="btn btn-danger mb-1">Delete</button>
+                                <button class="btn btn-danger mb-1" data-bs-toggle="modal"
+                                    data-bs-target="#confirmDialog">Delete</button>
                             </div>
                         @endif
                     </div>
                     <div class="mt-2 mb-2">
                         @foreach ($item->visibleLabels as $label)
-                            <a href="{{ route('labels.show', $label) }}" class="badge rounded-pill text-decoration-none"
+                            <a href="{{ route('labels.show', $label) }}"
+                                class="badge rounded-pill text-decoration-none label-md"
                                 style="background-color: {{ $label->color }}">{{ $label->name }}</a>
                         @endforeach
                     </div>
@@ -36,7 +38,7 @@
                             alt="Image" class="img-fluid rounded mt-2 mb-3">
                     </div>
                     <div class="col-12 col-md-6 col-lg-8">
-                        <p>{{ $item->description }}</p>
+                        <p>{!! nl2br(e($item->description)) !!}</p>
                     </div>
                 </div>
             </div>
@@ -93,4 +95,26 @@
             @endforelse
         </div>
     </div>
+
+    <form action="{{ route('items.destroy', $item) }}" method="POST">
+        @method('DELETE')
+        @csrf
+        <div class="modal fade" id="confirmDialog" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm delete</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this item?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 @endsection

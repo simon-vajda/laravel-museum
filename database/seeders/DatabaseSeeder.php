@@ -32,14 +32,14 @@ class DatabaseSeeder extends Seeder
         ]);
         $users->add($admin);
 
-        $labels_count = rand(4, 8);
+        $labels_count = rand(6, 10);
         $labels = \App\Models\Label::factory($labels_count)->create();
 
         $items_count = rand(15, 20);
         $items = \App\Models\Item::factory($items_count)->create();
 
         foreach ($items as $item) {
-            for ($i = 0; $i < rand(0, 8); $i++) {
+            for ($i = 0; $i < rand(0, 10); $i++) {
                 try {
                     $item->labels()->attach($labels->random());
                 } catch (\Exception $e) {

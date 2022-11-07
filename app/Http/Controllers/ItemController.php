@@ -132,6 +132,14 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        //
+        //$this->authorize('delete', $item);
+        if ($item->image) {
+            Storage::disk('public')->delete($item->image);
+        }
+        $item->delete();
+
+        Session::flash("item_deleted", $item->name);
+
+        return Redirect::route('items.index');
     }
 }

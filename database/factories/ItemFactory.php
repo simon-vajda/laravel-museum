@@ -18,7 +18,7 @@ class ItemFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-            'description' => $this->faker->text,
+            'description' => fake()->paragraphs(rand(3,7), true),
             'obtained' => $this->faker->date,
         ];
     }

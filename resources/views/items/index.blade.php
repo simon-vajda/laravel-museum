@@ -2,6 +2,12 @@
 
 @section('content')
     <div class="container">
+        @if (Session::has('item_deleted'))
+            <div class="alert alert-success" role="alert">
+                Item {{ Session::get('item_deleted') }} successfully deleted!
+            </div>
+        @endif
+
         @yield('header')
         <div class="row gy-4">
             @forelse ($items as $item)
