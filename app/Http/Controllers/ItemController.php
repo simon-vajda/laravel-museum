@@ -6,6 +6,7 @@ use App\Models\Item;
 use App\Models\Label;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
@@ -33,9 +34,7 @@ class ItemController extends Controller
      */
     public function create()
     {
-        if (Auth::guest() || !Auth::user()->is_admin) {
-            return Redirect::route('items.index');
-        }
+        $this->authorize('create');
 
         return view('items.create', [
             'labels' => Label::all()->where('display', true)
@@ -50,6 +49,8 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create');
+
         $validated = $request->validate(
             [
                 'name' => ['required', 'min:3'],
@@ -109,7 +110,7 @@ class ItemController extends Controller
      */
     public function edit(Item $item)
     {
-        //
+        $this->authorize('update', $item);
     }
 
     /**
@@ -121,7 +122,7 @@ class ItemController extends Controller
      */
     public function update(Request $request, Item $item)
     {
-        //
+        $this->authorize('update', $item);
     }
 
     /**
@@ -132,7 +133,8 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        //$this->authorize('delete', $item);
+        $this->authorize('delete', $item);
+
         if ($item->image) {
             Storage::disk('public')->delete($item->image);
         }

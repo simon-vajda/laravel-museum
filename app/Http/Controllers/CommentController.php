@@ -38,6 +38,8 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create');
+
         $validated = $request->validate(
             [
                 'text' => ['required'],
@@ -78,7 +80,7 @@ class CommentController extends Controller
      */
     public function edit(Comment $comment)
     {
-        //
+        $this->authorize('update', $comment);
     }
 
     /**
@@ -90,7 +92,7 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
-        //
+        $this->authorize('update', $comment);
     }
 
     /**
@@ -101,6 +103,6 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        //
+        $this->authorize('delete', $comment);
     }
 }
