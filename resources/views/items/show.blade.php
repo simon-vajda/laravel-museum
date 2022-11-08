@@ -7,6 +7,11 @@
                 Item {{ Session::get('item_created') }} successfully created!
             </div>
         @endif
+        @if (Session::has('item_updated'))
+            <div class="alert alert-success" role="alert">
+                Item {{ Session::get('item_updated') }} successfully updated!
+            </div>
+        @endif
 
         <div class="row">
             <div class="container-fluid">
@@ -18,7 +23,7 @@
                         </div>
                         <div>
                             @can('update', $item)
-                                <button class="btn btn-light mb-1">Edit</button>
+                                <a href="{{ route('items.edit', $item) }}" class="btn btn-light mb-1">Edit</a>
                             @endcan
                             @can('delete', $item)
                                 <button class="btn btn-danger mb-1" data-bs-toggle="modal"

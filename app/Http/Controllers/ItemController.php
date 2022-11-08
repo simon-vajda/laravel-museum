@@ -53,7 +53,7 @@ class ItemController extends Controller
 
         $validated = $request->validate(
             [
-                'name' => ['required', 'min:3'],
+                'name' => ['required', 'min:2'],
                 'description' => ['required'],
                 'obtained' => ['required', 'date'],
                 'image' => ['nullable', 'file', 'image', 'max:4096'],
@@ -111,6 +111,10 @@ class ItemController extends Controller
     public function edit(Item $item)
     {
         $this->authorize('update', $item);
+        return view('items.edit', [
+            'item' => $item,
+            'labels' => Label::all()->where('display', true)
+        ]);
     }
 
     /**
@@ -123,6 +127,42 @@ class ItemController extends Controller
     public function update(Request $request, Item $item)
     {
         $this->authorize('update', $item);
+
+        $validated = $request->validate(
+            [
+                'name' => ['required', 'min:2'],
+                'description' => ['required'],
+                'obtained' => ['required', 'date'],
+                'image' => ['nullable', 'file', 'image', 'max:4096'],
+                'labels' => ['nullable', 'array'],
+                'labels.*' => ['numeric', 'integer', 'exists:labels,id'],
+            ]
+        );
+
+        // filename
+        $fn = null;
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+
+            $fn = 'ci_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+
+            Storage::disk('public')->put($fn, $file->get());
+        }
+
+        $item = Item::find($item->id);
+        $item->name = $validated['name'];
+        $item->description = $validated['description'];
+        $item->obtained = $validated['obtained'];
+        $item->image = $fn == null ? $item->image : $fn;
+        $item->save();
+
+        $newLabels = isset($validated['labels']) ? $validated['labels'] : [];
+        $item->labels()->sync($newLabels);
+
+        Session::flash("item_updated", $validated['name']);
+
+        return Redirect::route('items.show', $item);
     }
 
     /**
