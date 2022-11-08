@@ -16,13 +16,15 @@
                             <h1>{{ $item->name }}</h1>
                             <div class="text-muted">Obtained on {{ $item->obtained }}</div>
                         </div>
-                        @if (Auth::check() && Auth::user()->is_admin)
-                            <div>
+                        <div>
+                            @can('update', $item)
                                 <button class="btn btn-light mb-1">Edit</button>
+                            @endcan
+                            @can('delete', $item)
                                 <button class="btn btn-danger mb-1" data-bs-toggle="modal"
                                     data-bs-target="#confirmDialog">Delete</button>
-                            </div>
-                        @endif
+                            @endcan
+                        </div>
                     </div>
                     <div class="mt-2 mb-2">
                         @foreach ($item->visibleLabels as $label)
@@ -80,12 +82,12 @@
                             <div class="mb-0">
                                 <span class="text-dark">{{ $comment->author->name }}</span>
                                 <span class="text-secondary"><small>•</small> {{ $comment->updated_at }}</span>
-                                @if (Auth::check() && Auth::user()->is_admin)
+                                @can('delete', $comment)
                                     <form action="delete.php" method="post" class="d-inline">
                                         <input type="hidden" name="id" value="">
                                         <input class="comment-del-btn text-danger float-end" type="submit" value="Delete">
                                     </form>
-                                @endif
+                                @endcan
                             </div>
                         </div>
                     </div>
