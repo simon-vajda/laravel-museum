@@ -2,9 +2,9 @@
 
 @section('content')
     <div class="container">
-        @if (Session::has('item_deleted'))
+        @if (Session::has('success'))
             <div class="alert alert-success" role="alert">
-                Item {{ Session::get('item_deleted') }} successfully deleted!
+                {{ Session::get('success') }}
             </div>
         @endif
 

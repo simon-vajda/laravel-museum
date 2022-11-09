@@ -34,7 +34,7 @@ class ItemController extends Controller
      */
     public function create()
     {
-        $this->authorize('create');
+        $this->authorize('create', Item::class);
 
         return view('items.create', [
             'labels' => Label::all()->where('display', true)
@@ -49,7 +49,7 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create');
+        $this->authorize('create', Item::class);
 
         $validated = $request->validate(
             [
@@ -84,7 +84,7 @@ class ItemController extends Controller
             $item->labels()->sync($validated['labels']);
         }
 
-        Session::flash("item_created", $validated['name']);
+        Session::flash("success", "Item " . $validated['name'] . " created");
 
         return Redirect::route('items.show', $item);
     }
@@ -160,7 +160,7 @@ class ItemController extends Controller
         $newLabels = isset($validated['labels']) ? $validated['labels'] : [];
         $item->labels()->sync($newLabels);
 
-        Session::flash("item_updated", $validated['name']);
+        Session::flash("success", "Item " . $validated['name'] . " updated");
 
         return Redirect::route('items.show', $item);
     }
@@ -180,7 +180,7 @@ class ItemController extends Controller
         }
         $item->delete();
 
-        Session::flash("item_deleted", $item->name);
+        Session::flash("success", "Item " . $item->name . " deleted");
 
         return Redirect::route('items.index');
     }

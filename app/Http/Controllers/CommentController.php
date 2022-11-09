@@ -7,6 +7,7 @@ use App\Models\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class CommentController extends Controller
 {
@@ -38,15 +39,15 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create');
+        $this->authorize('create', Comment::class);
 
         $validated = $request->validate(
             [
                 'text' => ['required'],
-                'item' => ['required'],
+                'item' => ['required', 'exists:items,id'],
             ],
             [
-                'required' => 'This field is required',
+                'text.required' => 'The comment cannot be empty',
             ]
         );
 
@@ -93,6 +94,23 @@ class CommentController extends Controller
     public function update(Request $request, Comment $comment)
     {
         $this->authorize('update', $comment);
+
+        $validated = $request->validate(
+            [
+                'update_text' => ['required'],
+                'comment_id' => ['required'],
+            ],
+            [
+                'update_text.required' => 'The comment cannot be empty',
+            ]
+        );
+
+        $comment->text = $validated['update_text'];
+        $comment->save();
+
+        Session::flash('success', 'Comment updated successfully');
+
+        return Redirect::route('items.show', $comment->item);
     }
 
     /**
@@ -104,5 +122,8 @@ class CommentController extends Controller
     public function destroy(Comment $comment)
     {
         $this->authorize('delete', $comment);
+        $comment->delete();
+        Session::flash("success", "Comment deleted");
+        return Redirect::route('items.show', $comment->item);
     }
 }

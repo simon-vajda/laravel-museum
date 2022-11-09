@@ -2,14 +2,9 @@
 
 @section('content')
     <div class="container">
-        @if (Session::has('item_created'))
+        @if (Session::has('success'))
             <div class="alert alert-success" role="alert">
-                Item {{ Session::get('item_created') }} successfully created!
-            </div>
-        @endif
-        @if (Session::has('item_updated'))
-            <div class="alert alert-success" role="alert">
-                Item {{ Session::get('item_updated') }} successfully updated!
+                {{ Session::get('success') }}
             </div>
         @endif
 
@@ -23,7 +18,7 @@
                         </div>
                         <div>
                             @can('update', $item)
-                                <a href="{{ route('items.edit', $item) }}" class="btn btn-light mb-1">Edit</a>
+                                <a href="{{ route('items.edit', $item) }}" class="btn btn-secondary mb-1">Edit</a>
                             @endcan
                             @can('delete', $item)
                                 <button class="btn btn-danger mb-1" data-bs-toggle="modal"
@@ -80,20 +75,27 @@
         <div class="row">
             @forelse ($item->comments as $comment)
                 <div class="mb-3">
-                    <div class="card mb-2">
-                        <div class="card-body pb-1">
-                            <div class="card-text">{{ $comment->text }}</div>
-                            <hr class="mt-2 mb-1" />
-                            <div class="mb-0">
-                                <span class="text-dark">{{ $comment->author->name }}</span>
-                                <span class="text-secondary"><small>•</small> {{ $comment->updated_at }}</span>
+                    <div class="card mb-2" data-id="{{ $comment->id }}">
+                        <div class="card-header">
+                            <span class="text-dark">{{ $comment->author->name }}</span>
+                            <span class="text-secondary"><small>•</small> {{ $comment->updated_at }}</span>
+                            <span class="float-end">
+                                @can('update', $comment)
+                                    <button class="btn btn-comment btn-secondary edit-btn" type="submit"
+                                        onclick="editComment({{ $comment->id }})" data-bs-toggle="modal"
+                                        data-bs-target="#commentUpdateDialog">Edit</button>
+                                @endcan
                                 @can('delete', $comment)
-                                    <form action="delete.php" method="post" class="d-inline">
-                                        <input type="hidden" name="id" value="">
-                                        <input class="comment-del-btn text-danger float-end" type="submit" value="Delete">
+                                    <form action="{{ route('comments.destroy', $comment) }}" method="post" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-comment btn-danger" type="submit">Delete</button>
                                     </form>
                                 @endcan
-                            </div>
+                            </span>
+                        </div>
+                        <div class="card-body pb-1">
+                            <div class="card-text">{{ $comment->text }}</div>
                         </div>
                     </div>
                 </div>
@@ -124,4 +126,62 @@
             </div>
         </div>
     </form>
+
+    <form method="POST">
+        @method('PUT')
+        @csrf
+        <input type="hidden" name="comment_id" id="comment_id" value="{{ old('comment_id') }}">
+        <div class="modal fade" id="commentUpdateDialog" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Update comment</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea class="form-control @error('update_text') is-invalid @enderror" name="update_text" rows="6"></textarea>
+                        @error('update_text')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+@endsection
+
+@section('scripts')
+    <script>
+        function editComment(id) {
+            const commentCard = document.querySelector(`[data-id="${id}"]`);
+            const text = commentCard.querySelector('.card-text').textContent;
+            const dialog = document.querySelector('#commentUpdateDialog');
+            const form = dialog.parentElement;
+            const idInput = dialog.previousElementSibling;
+            const textArea = dialog.querySelector("textarea");
+            textArea.value = text;
+            form.action = `/comments/${id}`;
+            idInput.value = id;
+        }
+
+        if (
+            @error('update_text')
+                true
+            @else
+                false
+            @enderror ) {
+            window.addEventListener('load', () => {
+                console.log("old id", "{{ old('comment_id') }}");
+                editComment({{ old('comment_id') }});
+                const editBtn = document.querySelector('.edit-btn');
+                editBtn.click();
+            })
+        }
+    </script>
 @endsection
