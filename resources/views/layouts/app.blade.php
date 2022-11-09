@@ -35,11 +35,16 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-                        @if (Auth::check() && Auth::user()->is_admin)
+                        @can('create', App\Models\Item::class)
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('items.create') }}">New item</a>
+                                <a class="nav-link" href="{{ route('items.create') }}">Create item</a>
                             </li>
-                        @endif
+                        @endcan
+                        @can('create', App\Models\Label::class)
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('labels.create') }}">Create label</a>
+                            </li>
+                        @endcan
                     </ul>
 
                     <!-- Right Side Of Navbar -->

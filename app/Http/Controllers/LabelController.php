@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Label;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class LabelController extends Controller
 {
@@ -15,7 +16,9 @@ class LabelController extends Controller
      */
     public function index()
     {
-        //
+        return view('labels.index', [
+            'labels' => Label::orderBy('name')->paginate(100)
+        ]);
     }
 
     /**
@@ -25,7 +28,9 @@ class LabelController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create', Label::class);
+
+        return view('labels.create');
     }
 
     /**
@@ -36,7 +41,23 @@ class LabelController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('create', Label::class);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'display' => ['boolean'],
+            'color' => ['required', 'regex:/^#(?:[0-9a-fA-F]{3}){1,2}$/']
+        ], [
+            'color.regex' => 'Invalid color format'
+        ]);
+
+        $label = new Label();
+        $label->name = $validated['name'];
+        $label->display = $validated['display'] ?? false;
+        $label->color = $validated['color'];
+        $label->save();
+
+        return Redirect::route('labels.create')->with('success', 'Label created');
     }
 
     /**
