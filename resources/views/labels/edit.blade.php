@@ -3,7 +3,8 @@
 @section('content')
     <div class="container">
         <h1>New label</h1>
-        <form action="{{ route('labels.store') }}" method="POST">
+        <form action="{{ route('labels.update', $label) }}" method="POST">
+            @method('PUT')
             @csrf
             <div class="row">
                 <div class="col-12 col-md-8">
@@ -12,7 +13,7 @@
                             <label for="labelName" class="col-form-label col-sm-2">Name</label>
                             <div class=" col-sm-10">
                                 <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                    id="labelName" name="name" value="{{ old('name') }}">
+                                    id="labelName" name="name" value="{{ old('name', $label->name) }}">
                                 @error('name')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -25,7 +26,7 @@
                             <div class="col-sm-10">
                                 <input type="color"
                                     class="form-control form-control-color @error('color') is-invalid @enderror"
-                                    id="labelColorPicker" value="{{ old('color', '#ffc107') }}" name="color"
+                                    id="labelColorPicker" value="{{ old('color', $label->color) }}" name="color"
                                     title="Choose your color">
                                 @error('color')
                                     <div class="invalid-feedback">
@@ -41,7 +42,7 @@
                             <div class="col-sm-10">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="1" name="display"
-                                        id="labelDisplay" checked>
+                                        id="labelDisplay" {{ $label->display ? 'checked' : '' }}>
                                     <label class="form-check-label" for="labelDisplay">Display</label>
                                 </div>
                             </div>
@@ -51,15 +52,16 @@
                 <div class="col-12 col-md-4">
                     <div class="row mt-4">
                         <div class="h2 text-center">
-                            <span class="badge rounded-pill" style="background-color: {{ old('color', '#ffc107') }}"
-                                id="previewPill">{{ old('name', 'preview') }}</span>
+                            <span class="badge rounded-pill {{ !$label->display ? 'display-off' : '' }}"
+                                style="background-color: {{ old('color', $label->color) }}"
+                                id="previewPill">{{ old('name', $label->name) }}</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row mt-4">
                 <div class="col-12">
-                    <button type="submit" class="btn btn-primary float-end">Create</button>
+                    <button type="submit" class="btn btn-primary float-end">Update</button>
                 </div>
             </div>
         </form>

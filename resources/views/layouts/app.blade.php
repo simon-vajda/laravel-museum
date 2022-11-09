@@ -45,6 +45,11 @@
                                 <a class="nav-link" href="{{ route('labels.create') }}">Create label</a>
                             </li>
                         @endcan
+                        @can('viewAny', App\Models\Label::class)
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('labels.index') }}">Labels</a>
+                            </li>
+                        @endcan
                     </ul>
 
                     <!-- Right Side Of Navbar -->

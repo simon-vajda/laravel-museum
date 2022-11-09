@@ -19,7 +19,7 @@ class LabelPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return $user->is_admin;
     }
 
     /**
@@ -31,7 +31,7 @@ class LabelPolicy
      */
     public function view(User $user, Label $label)
     {
-        //
+        return $label->display || $user->is_admin;
     }
 
     /**

@@ -17,7 +17,7 @@ class LabelController extends Controller
     public function index()
     {
         return view('labels.index', [
-            'labels' => Label::orderBy('name')->paginate(100)
+            'labels' => Label::all()
         ]);
     }
 
@@ -57,7 +57,7 @@ class LabelController extends Controller
         $label->color = $validated['color'];
         $label->save();
 
-        return Redirect::route('labels.show', $label)->with('success', 'Label created');
+        return Redirect::route('labels.index')->with('success', 'Label created');
     }
 
     /**
@@ -82,7 +82,11 @@ class LabelController extends Controller
      */
     public function edit(Label $label)
     {
-        //
+        $this->authorize('update', $label);
+
+        return view('labels.edit', [
+            'label' => $label
+        ]);
     }
 
     /**
@@ -94,7 +98,22 @@ class LabelController extends Controller
      */
     public function update(Request $request, Label $label)
     {
-        //
+        $this->authorize('update', $label);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'display' => ['boolean'],
+            'color' => ['required', 'regex:/^#(?:[0-9a-fA-F]{3}){1,2}$/']
+        ], [
+            'color.regex' => 'Invalid color format'
+        ]);
+
+        $label->name = $validated['name'];
+        $label->display = $validated['display'] ?? false;
+        $label->color = $validated['color'];
+        $label->save();
+
+        return Redirect::route('labels.index')->with('success', 'Label updated');
     }
 
     /**

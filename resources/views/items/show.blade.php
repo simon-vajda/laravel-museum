@@ -81,7 +81,7 @@
                             <span class="text-secondary"><small>•</small> {{ $comment->updated_at }}</span>
                             <span class="float-end">
                                 @can('update', $comment)
-                                    <button class="btn btn-comment btn-secondary edit-btn" type="submit"
+                                    <button class="btn small-btn btn-secondary edit-btn" type="submit"
                                         onclick="editComment({{ $comment->id }})" data-bs-toggle="modal"
                                         data-bs-target="#commentUpdateDialog">Edit</button>
                                 @endcan
@@ -89,7 +89,7 @@
                                     <form action="{{ route('comments.destroy', $comment) }}" method="post" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="btn btn-comment btn-danger" type="submit">Delete</button>
+                                        <button class="btn small-btn btn-danger" type="submit">Delete</button>
                                     </form>
                                 @endcan
                             </span>
