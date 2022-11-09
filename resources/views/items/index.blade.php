@@ -34,10 +34,8 @@
                     </div>
                 </div>
             @empty
-                <div class="col-12">
-                    <div class="alert alert-info">
-                        <p class="mb-0">No items found.</p>
-                    </div>
+                <div class="col-12 text-center text-muted pt-4">
+                    <h4>No items found</h4>
                 </div>
             @endforelse
         </div>

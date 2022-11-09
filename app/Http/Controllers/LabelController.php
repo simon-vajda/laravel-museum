@@ -57,7 +57,7 @@ class LabelController extends Controller
         $label->color = $validated['color'];
         $label->save();
 
-        return Redirect::route('labels.create')->with('success', 'Label created');
+        return Redirect::route('labels.show', $label)->with('success', 'Label created');
     }
 
     /**
@@ -105,6 +105,8 @@ class LabelController extends Controller
      */
     public function destroy(Label $label)
     {
-        //
+        $this->authorize('delete', $label);
+        $label->delete();
+        return Redirect::route('labels.index')->with('success', 'Label deleted');
     }
 }

@@ -2,12 +2,6 @@
 
 @section('content')
     <div class="container">
-        @if (Session::has('success'))
-            <div class="alert alert-success" role="alert">
-                {{ Session::get('success') }}
-            </div>
-        @endif
-
         <h1>New label</h1>
         <form action="{{ route('labels.store') }}" method="POST">
             @csrf
